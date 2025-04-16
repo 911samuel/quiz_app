@@ -1,31 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_app/answer_button.dart';
-import 'package:quiz_app/data/questions.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:quiz_app_debugging/answer_button.dart';
+import 'package:quiz_app_debugging/data/questions.dart';
+
 class QuestionsScreen extends StatefulWidget {
-  const QuestionsScreen({super.key, required this.onSelectAnswer});
+  const QuestionsScreen({
+    super.key,
+    required this.onSelectAnswer,
+  });
 
   final void Function(String answer) onSelectAnswer;
+
   @override
-  State<StatefulWidget> createState() {
-    return _QuestionScreenState();
+  State<QuestionsScreen> createState() {
+    return _QuestionsScreenState();
   }
 }
 
-class _QuestionScreenState extends State<QuestionsScreen> {
-  var cureentQuestionIndex = 0;
+class _QuestionsScreenState extends State<QuestionsScreen> {
+  var currentQuestionIndex = 0;
 
-  void answerQuestion(String selectedAnswers) {
-    widget.onSelectAnswer(selectedAnswers);
+  void answerQuestion(String selectedAnswer) {
+    widget.onSelectAnswer(selectedAnswer);
+    // currentQuestionIndex = currentQuestionIndex + 1;
+    // currentQuestionIndex += 1;
     setState(() {
-      cureentQuestionIndex++;
+      currentQuestionIndex++; // increments the value by 1
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    final currentQuestion = questions[cureentQuestionIndex];
+  Widget build(context) {
+    final currentQuestion = questions[currentQuestionIndex];
 
     return SizedBox(
       width: double.infinity,
@@ -45,14 +52,14 @@ class _QuestionScreenState extends State<QuestionsScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
-            ...currentQuestion.getShuffledAnswers().map((answer) {
+            ...currentQuestion.shuffledAnswers.map((answer) {
               return AnswerButton(
                 answerText: answer,
                 onTap: () {
                   answerQuestion(answer);
                 },
               );
-            }),
+            })
           ],
         ),
       ),

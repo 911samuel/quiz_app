@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_app/data/questions.dart';
-import 'package:quiz_app/questions_screen.dart';
-import 'package:quiz_app/results_screen.dart';
-import 'package:quiz_app/start_screen.dart';
+
+import 'package:quiz_app_debugging/start_screen.dart';
+import 'package:quiz_app_debugging/questions_screen.dart';
+import 'package:quiz_app_debugging/data/questions.dart';
+import 'package:quiz_app_debugging/results_screen.dart';
 
 class Quiz extends StatefulWidget {
   const Quiz({super.key});
@@ -14,41 +15,46 @@ class Quiz extends StatefulWidget {
 }
 
 class _QuizState extends State<Quiz> {
-  List<String> selectedAnswers = [];
-  var activeScreen = 'start-screen';
+  List<String> _selectedAnswers = [];
+  var _activeScreen = 'start-screen';
 
-  void chooseAnswer(String answer) {
-    selectedAnswers.add(answer);
-    if (selectedAnswers.length == questions.length) {
+  void _switchScreen() {
+    setState(() {
+      _activeScreen = 'questions-screen';
+    });
+  }
+
+  void _chooseAnswer(String answer) {
+    _selectedAnswers.add(answer);
+
+    if (_selectedAnswers.length == questions.length) {
       setState(() {
-        activeScreen = 'result-screen';
+        _activeScreen = 'results-screen';
       });
     }
   }
 
-  void switchScreen() {
-    setState(() {
-      activeScreen = 'questions-screen';
-    });
-  }
-
   void restartQuiz() {
-     setState(() {
-      selectedAnswers = [];
-      activeScreen = 'questions-screen';
+    setState(() {
+      _activeScreen = 'questions-screen';
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    Widget screen = StartScreen(switchScreen);
+  Widget build(context) {
+    Widget screenWidget = StartScreen(_switchScreen);
 
-    if (activeScreen == 'questions-screen') {
-      screen = QuestionsScreen(onSelectAnswer: chooseAnswer);
+    if (_activeScreen == 'questions-screen') {
+      screenWidget = QuestionsScreen(
+        onSelectAnswer: _chooseAnswer,
+      );
     }
 
-    if (activeScreen == 'result-screen') {
-      screen = ResultsScreen(chooseAnswers: selectedAnswers, onRestart: restartQuiz,);
+    if (_activeScreen == 'results-screen') {
+      screenWidget = ResultsScreen(
+        chosenAnswers: _selectedAnswers,
+        onRestart: restartQuiz,
+      );
     }
 
     return MaterialApp(
@@ -64,7 +70,7 @@ class _QuizState extends State<Quiz> {
               end: Alignment.bottomRight,
             ),
           ),
-          child: screen,
+          child: screenWidget,
         ),
       ),
     );
